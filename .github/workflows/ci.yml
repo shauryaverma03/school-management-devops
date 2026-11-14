@@ -1,0 +1,21 @@
+name: checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: ruff check app tests
+      - run: pytest -q
+      - run: docker build -t school-api:${{ github.sha }} .
+      - run: docker save school-api:${{ github.sha }} | gzip > school-api.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: school-api-${{ github.sha }}
+          path: school-api.tar.gz

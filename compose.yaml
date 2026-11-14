@@ -1,0 +1,43 @@
+services:
+  db:
+    image: postgres:16.6-alpine
+    environment:
+      POSTGRES_USER: school
+      POSTGRES_DB: school
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD}
+    volumes:
+      - data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U school"]
+      interval: 5s
+      retries: 10
+    restart: unless-stopped
+  app:
+    image: school-api:${IMAGE_TAG:-local}
+    build: .
+    environment:
+      DATABASE_URL: postgresql+psycopg://school:${DB_PASSWORD}@db/school
+      TEACHER_TOKEN: ${TEACHER_TOKEN}
+      OTHER_TEACHER_TOKEN: ${OTHER_TEACHER_TOKEN}
+      STUDENT_TOKEN: ${STUDENT_TOKEN}
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/ready')"]
+      interval: 10s
+      retries: 3
+    restart: unless-stopped
+  proxy:
+    image: caddy:2.8.4-alpine
+    ports:
+      - "127.0.0.1:8443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - certificates:/data
+    depends_on:
+      - app
+    restart: unless-stopped
+volumes:
+  data:
+  certificates:
