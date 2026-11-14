@@ -1,0 +1,5 @@
+region = "ap-south-1"
+project = "schoolroom"
+admin_cidr = "203.0.113.10/32"
+instance_type = "t3.medium"
+k3s_version = "v1.34.1+k3s1"

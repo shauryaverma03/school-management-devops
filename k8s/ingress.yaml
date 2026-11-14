@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: school
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - school.local
+      secretName: school-tls
+  rules:
+    - host: school.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: school-api
+                port:
+                  number: 8000

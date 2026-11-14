@@ -5,3 +5,12 @@ __pycache__/
 .ruff_cache/
 backups/
 *.db
+
+.terraform/
+*.tfstate*
+*.tfplan
+*.tfvars
+*.pem
+*.key
+.kube/
+coverage.xml
