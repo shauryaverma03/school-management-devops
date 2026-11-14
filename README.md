@@ -50,3 +50,19 @@ See docs/runbook.md. Keep evidence in docs/evidence and link it below before sub
 Demo authentication uses long environment-provided bearer tokens whose hashes are stored in the database. Token rotation requires restarting the application. The database account owns its schema for this small local deployment. Separate migration and runtime database roles would improve production privileges. Schema creation uses startup SQL rather than a migration framework. CI tests currently use SQLite, so PostgreSQL deployment requires separate integration verification. TLS is local and the deployment is bound to localhost. Metrics are not implemented.
 
 AI assistance was used to interpret the assignment and generate the initial implementation and documentation. The candidate must review, understand and validate the implementation and update this disclosure before submission.
+
+## Run the frontend and backend manually
+
+For the local sample, use Python 3.12 and install dependencies once:
+
+```sh
+cd ~/Desktop/school-management-devops
+python3.12 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+sh scripts/run-local.sh
+```
+
+The existing virtual environment is already installed on this machine, so you can start directly with the last command.
+Open http://127.0.0.1:8000 and connect using the teacher token printed in Terminal. Choose a class, date and session, then mark a student present or absent. Refresh to verify persistence. Use the second teacher or student token to demonstrate write restrictions. Stop with Control-C.
+
+This launcher uses SQLite and explicit synthetic demo tokens, and binds only to localhost. Docker deployment continues to use PostgreSQL and environment-provided secrets. The frontend is served by FastAPI in both modes. Attendance records are immutable through the demo UI. Select another session or date for another demonstration.
