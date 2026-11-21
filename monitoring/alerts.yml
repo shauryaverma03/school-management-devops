@@ -1,0 +1,18 @@
+groups:
+  - name: school
+    rules:
+      - alert: SchoolServiceDown
+        expr: up{job="school"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: School API cannot be scraped
+          description: Inspect app container status and logs.
+      - alert: SchoolHighErrorRate
+        expr: sum(rate(school_http_requests_total{status=~"5.."}[5m])) / clamp_min(sum(rate(school_http_requests_total[5m])), 0.001) > 0.05
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: School API error rate exceeds five percent

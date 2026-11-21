@@ -1,0 +1,8 @@
+.git
+.env*
+.venv
+backups
+**/__pycache__
+*.db
+.terraform
+docs/evidence
